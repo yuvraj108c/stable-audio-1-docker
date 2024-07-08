@@ -1,0 +1,1 @@
+https://huggingface.co/spaces/hmb/stableaudio-open-1.0
