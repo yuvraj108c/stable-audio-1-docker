@@ -165,4 +165,4 @@ interface = gr.Interface(
 model, model_config = load_model_sa()
 
 # Launch the Interface
-interface.queue(max_size=10).launch(server_name="0.0.0.0")
+interface.launch(server_name="0.0.0.0")
