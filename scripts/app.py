@@ -4,6 +4,10 @@ from einops import rearrange
 import gradio as gr
 import uuid
 import json
+import base64
+from io import BytesIO
+import numpy as np
+from scipy.io import wavfile
 
 # Importing the model-related functions
 # from stable_audio_tools import get_pretrained_model
@@ -76,16 +80,8 @@ def generate_audio(prompt, sampler_type_dropdown, seconds_total=30, steps=100, c
         output = output[:, :max_length]
         print(f"Audio trimmed to {seconds_total} seconds.")
 
-    # Generate a unique filename for the output
-    unique_filename = f"output_{uuid.uuid4().hex}.wav"
-    print(f"Saving audio to file: {unique_filename}")
-
-    # Save to file
-    torchaudio.save(unique_filename, output, sample_rate)
-    print(f"Audio saved: {unique_filename}")
-
-    # Return the path to the generated audio file
-    return unique_filename
+    torchaudio.save("temp_output.wav", output, model_config["sample_rate"])
+    return wavfile.read("temp_output.wav")
 
 # Setting up the Gradio Interface
 interface = gr.Interface(
@@ -101,7 +97,7 @@ interface = gr.Interface(
         gr.Slider(minimum=0.0, maximum=1000.0, step=0.1, value=500, label="Sigma max"),
 
     ],
-    outputs=gr.Audio(type="filepath", label="Generated Audio"),
+    outputs=gr.Audio(label="Generated Audio",format="wav", show_download_button=True),
     title="Stable Audio Generator",
     description="Generate variable-length stereo audio at 44.1kHz from text prompts using Stable Audio Open 1.0.",
     examples=[
